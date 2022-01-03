@@ -6,7 +6,10 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Get()
-  getCategory(): string[] {
-    return this.categoryService.getCategory();
+  async getCategory(): Promise<{category: string[]}> {
+    const categories = await this.categoryService.getCategory();
+    return {
+      category: categories.map(category => category.name),
+    }
   }
 }

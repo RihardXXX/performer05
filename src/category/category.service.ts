@@ -1,21 +1,17 @@
 import { Injectable } from "@nestjs/common";
+import { CategoryEntity } from "@app/category/category.entity";
+import { Repository } from "typeorm";
+import { InjectRepository } from "@nestjs/typeorm";
 
 @Injectable()
 export class CategoryService {
+  constructor(
+    @InjectRepository(CategoryEntity)
+    private readonly categoryRepository: Repository<CategoryEntity>
+  ) {
+  }
 
-  getCategory(): string[] {
-    return [
-      'Сборка и ремонт мебели',
-      'Отделочные работы',
-      'Электрика',
-      'Сантехника',
-      'Ремонт офиса',
-      'Остекление балконов',
-      'Ремонт ванной',
-      'Строительство бань, саун',
-      'Ремонт кухни',
-      'Строительство домов, коттеджей',
-      'Ремонт квартиры'
-    ]
+  async getCategory(): Promise<CategoryEntity[]> {
+    return await this.categoryRepository.find();
   }
 }
