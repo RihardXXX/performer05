@@ -25,9 +25,17 @@ export default class createUserDto {
   @IsNotEmpty({
     message: 'поле пароль не может быть пустым'
   })
+  @MinLength(10, {
+    message: 'Пароль должен быть больше 10 символов',
+  })
+  @MaxLength(100, {
+    message: 'Пароль должен быть меньше 100 символов',
+  })
   readonly password: string;
 
-  @IsNotEmpty()
+  @IsNotEmpty({
+    message: "Роль пользователя должна быть указана обязательно"
+  })
   readonly role: string;
 
   readonly bio: string;

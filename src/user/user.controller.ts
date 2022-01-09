@@ -1,6 +1,7 @@
 import { Body, Controller, Post, UsePipes, ValidationPipe } from "@nestjs/common";
 import { UserService } from "@app/user/user.service";
 import CreateUserDto from "@app/user/dto/createUser.dto";
+import LoginUserDto from "@app/user/dto/loginUser.dto";
 import { UserEntity } from "@app/user/user.entity";
 
 @Controller()
@@ -20,6 +21,13 @@ export class UserController{
     // создаём нового пользователя
     const user = await this.userService.createUser(createUserDto);
     // нормализуем данные для клиента а также клеим токен
+    return this.userService.normalizeResponse(user);
+  }
+
+  @Post('users/login')
+  @UsePipes(new ValidationPipe())
+  async loginUser(@Body('user') loginUserDto: LoginUserDto): Promise<UserEntity> {
+    const user = await this.userService.loginUser(loginUserDto);
     return this.userService.normalizeResponse(user);
   }
 }

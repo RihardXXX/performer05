@@ -20,7 +20,7 @@ export class UserEntity {
   @Column({default: ''})
   bio: string
 
-  @Column()
+  @Column({select: false})
   password: string
 
   @BeforeInsert()
