@@ -71,6 +71,11 @@ export class UserService{
     return isUser
   }
 
+  // получение опред пользователя по id
+  getUserById(id: number): Promise<any> {
+    return this.userRepository.findOne(id);
+  }
+
   // генерация токена
   generateJWT(user: UserEntity): string {
     return sign({
@@ -81,7 +86,7 @@ export class UserService{
   }
 
   // Цепляем токен к данным пользователя
-  normalizeResponse(user: UserEntity): any {
+  normalizeResponse(user): any {
     return {
       user: {
         ...user,
