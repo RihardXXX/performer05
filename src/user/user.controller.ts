@@ -1,11 +1,12 @@
 import {
-  Body, Controller, Post, UsePipes, ValidationPipe, Req, Get
+  Body, Controller, Post, UsePipes, ValidationPipe, Req, Get, UseGuards
 } from "@nestjs/common";
 import { UserService } from "@app/user/user.service";
 import CreateUserDto from "@app/user/dto/createUser.dto";
 import LoginUserDto from "@app/user/dto/loginUser.dto";
 import { UserEntity } from "@app/user/user.entity";
-import { Request } from 'express';
+import AuthGuard from "@app/guards/auth.guard";
+import { User } from '@app/decorators/user.decorator';
 
 @Controller()
 export class UserController{
@@ -34,9 +35,15 @@ export class UserController{
     return this.userService.normalizeResponse(user);
   }
 
+  // 1. Запрос от клиента -
+  // 2. Мидлваре Проверка токена в заголовках -
+  // 3. Гуард кастомный Авториз или нет возвращает булеан -
+  // 4. Декоратор кастомный вытаскивает данные из заговловка
+  // 5. Сервис нормализует данные и возвращает данные пользователя
+
   @Get('user')
-  async currentUser(@Req() request: Request): Promise<any> {
-    const user = request.headers.authorization;
+  @UseGuards(AuthGuard)
+  async currentUser(@User() user: any): Promise<any> {
     return  this.userService.normalizeResponse(user);
   }
 }

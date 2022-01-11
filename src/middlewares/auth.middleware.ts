@@ -13,6 +13,7 @@ export class AuthMiddleware implements NestMiddleware {
   async use(request: Request, response: Response, next: NextFunction) {
     if (!request.headers.authorization) {
       // если нет токена
+      request.headers.authorization = null;
       next();
       return;
     }
@@ -27,6 +28,9 @@ export class AuthMiddleware implements NestMiddleware {
       request.headers.authorization = user;
       next();
     } catch(err) {
+      // Если токен распарсить не получилось или он фальшивый
+      // Мы просто чистим заголовки для экшенов
+      request.headers.authorization = null;
       console.log(err);
       next();
     }
