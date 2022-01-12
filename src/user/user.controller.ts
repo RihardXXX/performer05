@@ -1,5 +1,5 @@
 import {
-  Body, Controller, Post, UsePipes, ValidationPipe, Req, Get, UseGuards
+  Body, Controller, Post, UsePipes, ValidationPipe, Req, Get, UseGuards, Patch
 } from "@nestjs/common";
 import { UserService } from "@app/user/user.service";
 import CreateUserDto from "@app/user/dto/createUser.dto";
@@ -7,6 +7,7 @@ import LoginUserDto from "@app/user/dto/loginUser.dto";
 import { UserEntity } from "@app/user/user.entity";
 import AuthGuard from "@app/guards/auth.guard";
 import { User } from '@app/decorators/user.decorator';
+import UpdateUserDto from "@app/user/dto/updateUser.dto";
 
 @Controller()
 export class UserController{
@@ -45,6 +46,21 @@ export class UserController{
   @UseGuards(AuthGuard)
   async currentUser(@User() user: any): Promise<any> {
     return  this.userService.normalizeResponse(user);
+  }
+
+  // метод для обновления состояния пользователя
+  // 1. Проверить авторизацию через гуарды +
+  // 2. Через бади создать новое dto +
+  // 3. Получить через декоратор текущего пользователя +
+  // 4. Получить данные через +
+  // 5. Создать метод внутри сервиса который будет обновлять пользователя +
+  @Patch('user')
+  @UseGuards(AuthGuard)
+  async updateUser(
+    @User() user: any,
+    @Body('user') payload: UpdateUserDto): Promise<any> {
+    const updatedUser = await this.userService.updateUserState(user, payload);
+    return  this.userService.normalizeResponse(updatedUser);
   }
 }
 

@@ -87,11 +87,26 @@ export class UserService{
 
   // Цепляем токен к данным пользователя
   normalizeResponse(user): any {
+    delete user.password;
     return {
       user: {
         ...user,
         token: this.generateJWT(user)
       }
     }
+  }
+
+  // метод для обновления полей юзера
+  async updateUserState(user, payload) {
+    const id = user.id;
+    // получаем текущего юзера с базы
+    const updatedUser = await this.getUserById(id);
+    // обновляем его состояние
+    const newUser = {
+      ...updatedUser,
+      ...payload
+    }
+    // сохраняем юзера с обновлённым состоянием в базе
+    return await this.userRepository.save(newUser);
   }
 }
