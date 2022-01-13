@@ -1,0 +1,59 @@
+import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+
+// имя таблицы в БД
+@Entity({name: 'orders'})
+export class UserEntity {
+
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  slug: string;
+
+  @Column()
+  title: string;
+
+  @Column()
+  description: string;
+
+  @Column({default: ''})
+  body: string;
+
+  @Column({default: ''})
+  price: string;
+
+  @Column()
+  address: string;
+
+  @Column('simple-array')
+  category: string[];
+
+  // дата выполнения работ
+  @Column()
+  dueDate: string;
+
+  // время выполнения работ
+  @Column()
+  dueTime: string;
+
+  // массив с айдишками мастеров которые подали заявки
+  @Column('simple-array')
+  listOfPerformers: number[];
+
+  // выбран ли победитель
+  @Column({default: false})
+  selectedPerformer: boolean;
+
+  // изначальный статус заявки
+  @Column({default: 'свободен'})
+  status: string;
+
+  // айдишка победителя мастер
+  @Column({ default: null })
+  victory: number;
+
+  // дата создания
+  @Column({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
+  createdAt: Date;
+
+}

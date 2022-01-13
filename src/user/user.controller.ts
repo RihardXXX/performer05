@@ -62,5 +62,6 @@ export class UserController{
     const updatedUser = await this.userService.updateUserState(user, payload);
     return  this.userService.normalizeResponse(updatedUser);
   }
+
 }
 
