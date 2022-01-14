@@ -1,8 +1,12 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+  BeforeInsert, Column, Entity, PrimaryGeneratedColumn, ManyToOne
+} from "typeorm";
+
+import { UserEntity } from "@app/user/user.entity";
 
 // имя таблицы в БД
 @Entity({name: 'orders'})
-export class UserEntity {
+export class OrdersEntity {
 
   @PrimaryGeneratedColumn()
   id: number;
@@ -55,5 +59,8 @@ export class UserEntity {
   // дата создания
   @Column({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
   createdAt: Date;
+
+  @ManyToOne(() => UserEntity, user => user.orders)
+  user: UserEntity;
 
 }

@@ -1,5 +1,8 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+  BeforeInsert, Column, Entity, PrimaryGeneratedColumn, OneToMany
+} from "typeorm";
 import { hash } from 'bcrypt';
+import { OrdersEntity } from "@app/orders/orders.entity";
 
 // имя таблицы в БД
 @Entity({name: 'users'})
@@ -22,6 +25,9 @@ export class UserEntity {
 
   @Column({select: false})
   password: string
+
+  @OneToMany(() => OrdersEntity, order => order.user)
+  orders: OrdersEntity[];
 
   @BeforeInsert()
   async hashPassword() {
