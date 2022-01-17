@@ -1,13 +1,16 @@
 import {
-  BeforeInsert, Column, Entity, PrimaryGeneratedColumn, ManyToOne
+  BeforeInsert,
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  ManyToOne,
 } from "typeorm";
 
 import { UserEntity } from "@app/user/user.entity";
 
 // имя таблицы в БД
-@Entity({name: 'orders'})
+@Entity({ name: "orders" })
 export class OrdersEntity {
-
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -20,16 +23,16 @@ export class OrdersEntity {
   @Column()
   description: string;
 
-  @Column({default: ''})
+  @Column({ default: "" })
   body: string;
 
-  @Column({default: ''})
+  @Column({ default: "" })
   price: string;
 
   @Column()
   address: string;
 
-  @Column('simple-array')
+  @Column("simple-array")
   category: string[];
 
   // дата выполнения работ
@@ -41,15 +44,15 @@ export class OrdersEntity {
   dueTime: string;
 
   // массив с айдишками мастеров которые подали заявки
-  @Column('simple-array')
+  @Column("simple-array")
   listOfPerformers: number[];
 
   // выбран ли победитель
-  @Column({default: false})
+  @Column({ default: false })
   selectedPerformer: boolean;
 
   // изначальный статус заявки
-  @Column({default: 'свободен'})
+  @Column({ default: "свободен" })
   status: string;
 
   // айдишка победителя мастер
@@ -57,10 +60,9 @@ export class OrdersEntity {
   victory: number;
 
   // дата создания
-  @Column({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
+  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date;
 
-  @ManyToOne(() => UserEntity, user => user.orders)
+  @ManyToOne(() => UserEntity, (user) => user.orders)
   user: UserEntity;
-
 }
