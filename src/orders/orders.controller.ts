@@ -5,13 +5,14 @@ import {
   Body,
   UsePipes,
   ValidationPipe,
+  Get,
+  Param,
 } from "@nestjs/common";
 import { OrdersService } from "@app/orders/orders.service";
 import AuthGuard from "@app/guards/auth.guard";
 import RoleGuard from "@app/guards/role.guard";
 import OrderDto from "@app/orders/dto/createOrders.dto";
 import { User } from "@app/decorators/user.decorator";
-import { UserEntity } from "@app/user/user.entity";
 
 @Controller()
 export class OrdersController {
@@ -32,6 +33,18 @@ export class OrdersController {
     @User() user: any,
     @Body("order") createOrder: OrderDto
   ): Promise<any> {
-    return this.ordersService.createOrder(user, createOrder);
+    const newOrder = await this.ordersService.createOrder(user, createOrder);
+    return this.ordersService.normalizeOrders(newOrder);
+  }
+
+  // логика получения заказа по слагу
+  // 1. Создание функции которая нормализует получаемые данные из БД +
+  // 2. Установка декоратора для получения параметра +
+  // 3. По параметру сделать запрос и получить заказ +
+  // 4. Полученный заказ нормализовать через опред функцию +
+  @Get("orders/:slug")
+  async getOrder(@Param("slug") slug: string) {
+    const order = await this.ordersService.getOrderBySlug(slug);
+    return this.ordersService.normalizeOrders(order);
   }
 }

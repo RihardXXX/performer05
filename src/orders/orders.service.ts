@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import OrderDto from "@app/orders/dto/createOrders.dto";
 import { OrdersEntity } from "@app/orders/orders.entity";
 import { Repository } from "typeorm";
@@ -14,6 +14,7 @@ export class OrdersService {
     private readonly orderRepository: Repository<OrdersEntity>
   ) {}
 
+  // Создание заказа
   async createOrder(user: any, createOrder: OrderDto) {
     // Создаём сущность для заказа
     const order = new OrdersEntity();
@@ -39,10 +40,32 @@ export class OrdersService {
     return await this.orderRepository.save(order);
   }
 
+  // получение заказа по слагу
+  async getOrderBySlug(slug) {
+    return await this.orderRepository.findOne({ slug });
+    // if (!order.slug) {
+    //   throw new HttpException(
+    //     "заказ с таким номером отсутствует",
+    //     HttpStatus.UNPROCESSABLE_ENTITY
+    //   );
+    // }
+    // return order;
+  }
+
+  // генарация слага
   generateSLug(title) {
     return `${slugify(title, { lower: true, trim: true })}-${uuidv4().split(
       "-",
       1
     )}`;
+  }
+
+  // нормализация данных для клиента
+  normalizeOrders(order) {
+    return {
+      order: {
+        ...order,
+      },
+    };
   }
 }

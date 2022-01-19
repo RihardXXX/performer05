@@ -1,5 +1,10 @@
-import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable } from "@nestjs/common";
-
+import {
+  CanActivate,
+  ExecutionContext,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from "@nestjs/common";
 
 // тут мы будем проверять имеется пользователь после
 // https://docs.nestjs.com/guards
@@ -10,14 +15,13 @@ export default class AuthGuard implements CanActivate {
     const isUser = request.headers.authorization;
     // Если в мидлваре мы положили распарсенные данные
     // Допуск к роуту
-    if(isUser) {
+    if (isUser) {
       return true;
     }
 
     throw new HttpException(
-      'только для авторизованных пользователей',
+      "только для авторизованных пользователей",
       HttpStatus.UNAUTHORIZED
-    )
-
+    );
   }
 }
