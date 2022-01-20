@@ -7,6 +7,7 @@ import {
   ValidationPipe,
   Get,
   Param,
+  Delete,
 } from "@nestjs/common";
 import { OrdersService } from "@app/orders/orders.service";
 import AuthGuard from "@app/guards/auth.guard";
@@ -46,5 +47,18 @@ export class OrdersController {
   async getOrder(@Param("slug") slug: string) {
     const order = await this.ordersService.getOrderBySlug(slug);
     return this.ordersService.normalizeOrders(order);
+  }
+
+  // Удаление заказа
+  // 1.Проверка пользователя на авторизацию +
+  // 2.Проверка что пользователь является кастомером +
+  // 3.Проверка пользователя что пользователь именно этот создал этот заказ
+  // 4. Удаление статьи
+  @Delete("orders/:slug")
+  @UseGuards(AuthGuard)
+  @UseGuards(RoleGuard)
+  async deleteOrder(@Param("slug") slug: string, @User() user: any) {
+    const idCurrentUser = user.id;
+    return await this.ordersService.deleteOrderByslug(idCurrentUser, slug);
   }
 }

@@ -17,7 +17,7 @@ export default class RoleGuard implements CanActivate {
     }
 
     throw new HttpException(
-      "пользователь только с ролью клиент может выставлять заказы",
+      "пользователь только с ролью клиент может совершать это действие",
       HttpStatus.UNAUTHORIZED
     );
   }

@@ -43,13 +43,27 @@ export class OrdersService {
   // получение заказа по слагу
   async getOrderBySlug(slug) {
     return await this.orderRepository.findOne({ slug });
-    // if (!order.slug) {
-    //   throw new HttpException(
-    //     "заказ с таким номером отсутствует",
-    //     HttpStatus.UNPROCESSABLE_ENTITY
-    //   );
-    // }
-    // return order;
+  }
+
+  // Удаление заказа если пользователь является его автором
+  async deleteOrderByslug(idCurrentUser, slug): Promise<any> {
+    // находим статью по слагу
+    const order = await this.getOrderBySlug(slug);
+
+    if (!order) {
+      throw new HttpException("такой заказ не найден", HttpStatus.NOT_FOUND);
+    }
+
+    // Если заказ пытается удалить не её автор
+    if (order.user.id !== idCurrentUser) {
+      throw new HttpException(
+        "вы не являетесь автором данного заказа чтобы удалять его",
+        HttpStatus.FORBIDDEN
+      );
+    }
+
+    // если проверки пройдены то удаляем заказ
+    return await this.orderRepository.delete({ slug });
   }
 
   // генарация слага

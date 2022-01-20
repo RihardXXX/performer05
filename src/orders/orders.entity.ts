@@ -63,6 +63,7 @@ export class OrdersEntity {
   @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date;
 
-  @ManyToOne(() => UserEntity, (user) => user.orders)
+  // параметр eager true важен благодаря ему вместе с закзаами приходят и связанный с ним автор
+  @ManyToOne(() => UserEntity, (user) => user.orders, { eager: true })
   user: UserEntity;
 }
