@@ -47,7 +47,7 @@ export class OrdersService {
 
   // Удаление заказа если пользователь является его автором
   async deleteOrderByslug(idCurrentUser, slug): Promise<any> {
-    // находим статью по слагу
+    // находим заказ по слагу
     const order = await this.getOrderBySlug(slug);
 
     if (!order) {
@@ -64,6 +64,29 @@ export class OrdersService {
 
     // если проверки пройдены то удаляем заказ
     return await this.orderRepository.delete({ slug });
+  }
+
+  // обновление заказа в БД
+  async updateOrderBySlug(slug, user, updateOrder): Promise<any> {
+    // находим заказ по слагу
+    const order = await this.getOrderBySlug(slug);
+
+    if (!order) {
+      throw new HttpException("такой заказ не найден", HttpStatus.NOT_FOUND);
+    }
+
+    const idCurrentUser = user.id;
+    // Если заказ пытается обновить не её автор
+    if (order.user.id !== idCurrentUser) {
+      throw new HttpException(
+        "вы не являетесь автором данного заказа чтобы удалять его",
+        HttpStatus.FORBIDDEN
+      );
+    }
+
+    // В найденный заказ по слагу перезаписываем новые данные
+    Object.assign(order, updateOrder);
+    return this.orderRepository.save(order);
   }
 
   // генарация слага

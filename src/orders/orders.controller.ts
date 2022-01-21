@@ -8,6 +8,7 @@ import {
   Get,
   Param,
   Delete,
+  Put,
 } from "@nestjs/common";
 import { OrdersService } from "@app/orders/orders.service";
 import AuthGuard from "@app/guards/auth.guard";
@@ -60,5 +61,28 @@ export class OrdersController {
   async deleteOrder(@Param("slug") slug: string, @User() user: any) {
     const idCurrentUser = user.id;
     return await this.ordersService.deleteOrderByslug(idCurrentUser, slug);
+  }
+
+  // Обновление статьи
+  // 1. Проверка на авторизацию +
+  // 2. Проверка на роль +
+  // 3. Проверка на авторство
+  // 4. Валидация как и при создании заказа но с другим именем +
+  // 5. Обновление всех полей
+  @UseGuards(AuthGuard)
+  @UsePipes(new ValidationPipe())
+  @Put("orders/:slug")
+  async updateOrder(
+    @Param("slug") slug: string,
+    @User() user: any,
+    @Body("order") updateOrder: OrderDto
+  ) {
+    const newOrder = await this.ordersService.updateOrderBySlug(
+      slug,
+      user,
+      updateOrder
+    );
+
+    return this.ordersService.normalizeOrders(newOrder);
   }
 }
