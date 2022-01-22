@@ -45,7 +45,7 @@ export class OrdersEntity {
 
   // массив с айдишками мастеров которые подали заявки
   @Column("simple-array")
-  listOfPerformers: number[];
+  listOfPerformers: string[];
 
   // выбран ли победитель
   @Column({ default: false })
@@ -56,8 +56,8 @@ export class OrdersEntity {
   status: string;
 
   // айдишка победителя мастер
-  @Column({ default: null })
-  victory: number;
+  @Column({ default: "" })
+  victory: string;
 
   // дата создания
   @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })

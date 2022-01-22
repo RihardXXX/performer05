@@ -9,6 +9,7 @@ import {
   Param,
   Delete,
   Put,
+  Patch,
 } from "@nestjs/common";
 import { OrdersService } from "@app/orders/orders.service";
 import AuthGuard from "@app/guards/auth.guard";
@@ -85,4 +86,35 @@ export class OrdersController {
 
     return this.ordersService.normalizeOrders(newOrder);
   }
+
+  // Подача заявки на заказ от имени Перформера
+  // 1. Проверка авторизации +
+  // 2. Получение заказа на который подаётся заявка +
+  // 3. Получение данных юзера +
+  // 4. Проверка его роли что он перформер +
+  // 5. Проверка заказа на наличие победителя, что нет победителя +
+  // 6. Проверка что ранее вы не подавали заявку на этот заказ +
+  // 7. Добавление айди Перформера в заказ +
+  @UseGuards(AuthGuard)
+  @Patch("orders/:slug/submit")
+  async submitApplicationOnOrder(
+    @Param("slug") slug: string,
+    @User() user: any
+  ) {
+    const order = await this.ordersService.submitApplicationOnOrderBySlug(
+      slug,
+      user
+    );
+    return this.ordersService.normalizeOrders(order);
+  }
+
+  // Определение победителя по заказу
+  // 1. Проверка авторизации
+  // 2. Проверка наличия заказа
+  // 3. Проверка на роль
+  // 4. Проверка что тот кто обращается с запросом является автором
+  // 5. Сравнение что айди в запросе совпадает с айди из списка листперформеров
+  // 6. Очистка списка листперформеров
+  // 7. Заполнение поля селектед перформер тру что победитель выбран
+  // 8. Положить айди победителя в раздел виктори заказа
 }

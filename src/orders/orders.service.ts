@@ -89,6 +89,51 @@ export class OrdersService {
     return this.orderRepository.save(order);
   }
 
+  // Метод который кладет айди перформера в заказ эта подача заявки
+  async submitApplicationOnOrderBySlug(slug, user) {
+    // находим заказ по слагу
+    const order = await this.getOrderBySlug(slug);
+
+    // то что такой заказ существует
+    if (!order) {
+      throw new HttpException("такой заказ не найден", HttpStatus.NOT_FOUND);
+    }
+
+    // То что роль подающего заявку является перформером
+    if (user.role !== "performer") {
+      throw new HttpException(
+        "заказ на выполнение работ могут подавать только мастера",
+        HttpStatus.CONFLICT
+      );
+    }
+
+    // Проверка что победитель еще не выбран если есть победитель то выдаём ошибку
+    if (order.victory && order.selectedPerformer) {
+      throw new HttpException(
+        "По данному заказу уже выбран победитель и работа выполняется",
+        HttpStatus.CONFLICT
+      );
+    }
+
+    const idPerformer = user.id;
+    // Проверка на то что что ранее вы подавали заявку
+    const repeatId = order.listOfPerformers.some(
+      (elem) => String(idPerformer) === elem
+    );
+    if (repeatId) {
+      throw new HttpException(
+        "Вы ранее туже подавали заявку на этот заказ",
+        HttpStatus.CONFLICT
+      );
+    }
+
+    // Айдишник перформера надо положить в список айдишников в заказе
+    // для того чтобы кастомер выбрал
+    order.listOfPerformers.push(String(idPerformer));
+
+    return this.orderRepository.save(order);
+  }
+
   // генарация слага
   generateSLug(title) {
     return `${slugify(title, { lower: true, trim: true })}-${uuidv4().split(
