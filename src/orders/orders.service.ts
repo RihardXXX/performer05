@@ -122,7 +122,7 @@ export class OrdersService {
     );
     if (repeatId) {
       throw new HttpException(
-        "Вы ранее туже подавали заявку на этот заказ",
+        "Вы ранее подавали заявку на этот заказ",
         HttpStatus.CONFLICT
       );
     }
@@ -132,6 +132,56 @@ export class OrdersService {
     order.listOfPerformers.push(String(idPerformer));
 
     return this.orderRepository.save(order);
+  }
+
+  // Выбираем победителя и кладёем его айди в заказ победителей
+  async selectVictoryPerformerById(user, victoryOrders) {
+    // получение текущего заказа
+    const slug = victoryOrders.slugOrder;
+    const idPerformer = victoryOrders.idPerformer;
+    const order = await this.getOrderBySlug(slug);
+
+    // console.log(user.role);
+
+    // То что роль того кто делает победитель является кастомер
+    if (user.role !== "customer") {
+      throw new HttpException(
+        "победителя может назначить только клиент",
+        HttpStatus.CONFLICT
+      );
+    }
+
+    // Если заказ пытается обновить не её автор
+    if (order.user.id !== user.id) {
+      throw new HttpException(
+        "вы не являетесь автором данного заказа чтобы выбирать победителя",
+        HttpStatus.FORBIDDEN
+      );
+    }
+
+    // Проверка что айди перформормера в запросе совпадает с айди ранее поданных в заказе
+    const checkId = order.listOfPerformers.some((id) => id === idPerformer);
+    if (!checkId) {
+      throw new HttpException(
+        "такой айди отсутствует отсутствует в ранее поданных в заказе",
+        HttpStatus.FORBIDDEN
+      );
+    }
+
+    // проверка что победитель ещё не назначен
+    if (order.victory) {
+      throw new HttpException("победитель уже назначен", HttpStatus.FORBIDDEN);
+    }
+
+    // Устанавливаем что статус победителя выбран и заказ в работе
+    // Очищаем массив айдишников
+    // кладём айди победителя
+    order.selectedPerformer = true;
+    order.status = "в работе";
+    order.listOfPerformers = [];
+    order.victory = String(idPerformer);
+
+    return await this.orderRepository.save(order);
   }
 
   // генарация слага

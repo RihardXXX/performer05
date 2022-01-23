@@ -16,6 +16,7 @@ import AuthGuard from "@app/guards/auth.guard";
 import RoleGuard from "@app/guards/role.guard";
 import OrderDto from "@app/orders/dto/createOrders.dto";
 import { User } from "@app/decorators/user.decorator";
+import VictoryOrdersDto from "@app/orders/dto/victoryOrders.dto";
 
 @Controller()
 export class OrdersController {
@@ -109,12 +110,29 @@ export class OrdersController {
   }
 
   // Определение победителя по заказу
-  // 1. Проверка авторизации
-  // 2. Проверка наличия заказа
-  // 3. Проверка на роль
-  // 4. Проверка что тот кто обращается с запросом является автором
-  // 5. Сравнение что айди в запросе совпадает с айди из списка листперформеров
-  // 6. Очистка списка листперформеров
-  // 7. Заполнение поля селектед перформер тру что победитель выбран
-  // 8. Положить айди победителя в раздел виктори заказа
+  // 1. Проверка авторизации +
+  // 2. Проверка наличия заказа +
+  // 3. Проверка на роль +
+  // 4. Проверка что тот кто обращается с запросом является автором +
+  // 5. Сравнение что айди в запросе совпадает с айди из списка листперформеров +
+  // 6. Проверить что победителя нет и виктори пустой +
+  // 7. Очистка списка листперформеров +
+  // 8. Заполнение поля селектед перформер тру что победитель выбран +
+  // 9. Положить айди победителя в раздел виктори заказа +
+  // 10. Статус свободен поменять на выполняется +
+  @UseGuards(AuthGuard)
+  @UsePipes(new ValidationPipe())
+  @Post("orders/victory")
+  async selectVictoryPerformer(
+    @User() user: any,
+    @Body("victory") victoryOrders: VictoryOrdersDto
+  ) {
+    const order = await this.ordersService.selectVictoryPerformerById(
+      user,
+      victoryOrders
+    );
+    return this.ordersService.normalizeOrders(order);
+  }
+
+  // Создаем сущности рейтинг, отзывы для перформера и кастомер и привязываем к аккаунтам
 }
