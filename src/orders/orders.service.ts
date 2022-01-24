@@ -1,18 +1,90 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import OrderDto from "@app/orders/dto/createOrders.dto";
 import { OrdersEntity } from "@app/orders/orders.entity";
-import { Repository } from "typeorm";
+import { getRepository, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import slugify from "slugify";
 import { v4 as uuidv4 } from "uuid";
+import { UserEntity } from "@app/user/user.entity";
 
 @Injectable()
 export class OrdersService {
   // чтобы можно было работать в базе с сущностью данной модели
   constructor(
     @InjectRepository(OrdersEntity)
-    private readonly orderRepository: Repository<OrdersEntity>
+    private readonly orderRepository: Repository<OrdersEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>
   ) {}
+
+  // Получение списка заказов
+  async getOrderList(user, query) {
+    // готовим запрос к таблице заказов
+    const queryBuilder = getRepository(OrdersEntity)
+      .createQueryBuilder("orders")
+      .leftJoinAndSelect("orders.user", "user"); // получаем авторов заказа
+
+    // Сортировка заказов по дате создания свежие сверху
+    queryBuilder.orderBy("orders.createdAt", "DESC");
+
+    // Поиск по категории, важно то что мы ищет и подстроку благодря проценту
+    if (query.category) {
+      queryBuilder.andWhere("orders.category LIKE :category", {
+        category: `%${query.category}%`,
+      });
+    }
+
+    // Поиск по ключевой фразе в названии
+    // То есть если в имени описании или в теле заказа присутствует это слово
+    if (query.name) {
+      queryBuilder.orWhere("orders.title LIKE :title", {
+        title: `%${query.name}%`,
+      });
+      queryBuilder.orWhere("orders.description LIKE :description", {
+        description: `%${query.name}%`,
+      });
+      queryBuilder.orWhere("orders.body LIKE :body", {
+        body: `%${query.name}%`,
+      });
+    }
+
+    // Поиск заказа по автору
+    if (query.username) {
+      // находим юзера в Базе БД
+      const user = await this.userRepository.findOne({
+        username: query.username,
+      });
+
+      // если нет такого автора по имени автора выдаём ошибку
+      if (!user) {
+        throw new HttpException(
+          "автора заказа с таким именем не существует",
+          HttpStatus.NOT_FOUND
+        );
+      }
+
+      // далее фильтрируем заказы по автору
+      queryBuilder.andWhere("orders.userId = :id", {
+        id: user.id,
+      });
+    }
+
+    // возвращаем количество заказов
+    const ordersCount = await queryBuilder.getCount();
+
+    // Пишем логику для пагинации
+    if (query.limit) {
+      queryBuilder.limit(query.limit);
+    }
+
+    if (query.offset) {
+      queryBuilder.offset(query.offset);
+    }
+
+    // возвращаем все заказы
+    const orders = await queryBuilder.getMany();
+    return { orders, ordersCount };
+  }
 
   // Создание заказа
   async createOrder(user: any, createOrder: OrderDto) {

@@ -22,47 +22,35 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
+## Описание проекта
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+[Nest](https://github.com/nestjs/nest) мощный фреймворк для бэкенд разработки
 
-## Installation
+## Установка проекта
 
 ```bash
 $ npm install
 ```
 
-## Running the app
+## Запуск проекта
 
 ```bash
-# development
+# режим разработки
 $ npm run start
 
-# watch mode
+# режим слежки разработки
 $ npm run start:dev
 
-# production mode
+# запуск билда для продакшина
 $ npm run start:prod
 ```
 
-## Test
 
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
+## Поддержка
 
 Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
 
-## Stay in touch
+## Автор фреймворка
 
 - Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
 - Website - [https://nestjs.com](https://nestjs.com/)
@@ -71,3 +59,13 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE).
+
+## Текущие планы
+1. Реализация Лайков заказов
+2. Реализация Лайков для клиентов и мастеров
+3. Реализация Отзывов по клиентам и мастерам
+4. Реализация Рейтинга у клиентов и мастеров
+5. Реализация Подписок на Клиентов и мастеров
+6. Реализация Просмотра заказов на которые подана заявка(Мастер)
+7. Реализация Просмотра моих опубликованных заказов(Клиент)
+

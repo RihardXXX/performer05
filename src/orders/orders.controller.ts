@@ -10,6 +10,7 @@ import {
   Delete,
   Put,
   Patch,
+  Query,
 } from "@nestjs/common";
 import { OrdersService } from "@app/orders/orders.service";
 import AuthGuard from "@app/guards/auth.guard";
@@ -21,6 +22,12 @@ import VictoryOrdersDto from "@app/orders/dto/victoryOrders.dto";
 @Controller()
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
+
+  // Логика получения списка заказов
+  @Get("orders/list")
+  async getOrderList(@User() user: any, @Query() query: any) {
+    return this.ordersService.getOrderList(user, query);
+  }
 
   // Логика создания заказа
   // 1. проверка авторизации +
