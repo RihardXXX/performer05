@@ -59,6 +59,9 @@ export class OrdersEntity {
   @Column({ default: "" })
   victory: string;
 
+  @Column({ default: 0 })
+  favoritesCount: number;
+
   // дата создания
   @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date;

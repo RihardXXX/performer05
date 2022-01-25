@@ -256,6 +256,31 @@ export class OrdersService {
     return await this.orderRepository.save(order);
   }
 
+  // Установка лайков для заказов
+  async addFavoritesOrder(currentUser, slug) {
+    const id = currentUser.id;
+    // Получение заказа
+    const order = await this.getOrderBySlug(slug);
+    // Получение пользователя с зависимостями
+    const user = await this.userRepository.findOne(id, {
+      relations: ["favorites"],
+    });
+
+    // проверка залайкан ли заказ
+    const isNotFavorited =
+      user.favorites.findIndex(
+        (orderInFavorites) => orderInFavorites.id === order.id
+      ) === -1;
+
+    if (isNotFavorited) {
+      user.favorites.push(order);
+      order.favoritesCount++;
+      await this.userRepository.save(user);
+      await this.orderRepository.save(order);
+    }
+    return order;
+  }
+
   // генарация слага
   generateSLug(title) {
     return `${slugify(title, { lower: true, trim: true })}-${uuidv4().split(
