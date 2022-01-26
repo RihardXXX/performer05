@@ -1,11 +1,11 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class initialTable1643057540272 implements MigrationInterface {
-    name = 'initialTable1643057540272'
+export class initilal1643133571600 implements MigrationInterface {
+    name = 'initilal1643133571600'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`CREATE TABLE "users" ("id" SERIAL NOT NULL, "username" character varying NOT NULL, "email" character varying NOT NULL, "role" character varying NOT NULL, "bio" character varying NOT NULL DEFAULT '', "password" character varying NOT NULL, CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "orders" ("id" SERIAL NOT NULL, "slug" character varying NOT NULL, "title" character varying NOT NULL, "description" character varying NOT NULL, "body" character varying NOT NULL DEFAULT '', "price" character varying NOT NULL DEFAULT '', "address" character varying NOT NULL, "category" text NOT NULL, "dueDate" character varying NOT NULL, "dueTime" character varying NOT NULL, "listOfPerformers" text NOT NULL, "selectedPerformer" boolean NOT NULL DEFAULT false, "status" character varying NOT NULL DEFAULT 'свободен', "victory" character varying NOT NULL DEFAULT '', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "userId" integer, CONSTRAINT "PK_710e2d4957aa5878dfe94e4ac2f" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "users" ("id" SERIAL NOT NULL, "username" character varying NOT NULL, "email" character varying NOT NULL, "role" character varying NOT NULL, "bio" character varying NOT NULL DEFAULT '', "password" character varying NOT NULL, "listIdLikes" text NOT NULL, "countLikes" integer NOT NULL DEFAULT '0', CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "orders" ("id" SERIAL NOT NULL, "slug" character varying NOT NULL, "title" character varying NOT NULL, "description" character varying NOT NULL, "body" character varying NOT NULL DEFAULT '', "price" character varying NOT NULL DEFAULT '', "address" character varying NOT NULL, "category" text NOT NULL, "dueDate" character varying NOT NULL, "dueTime" character varying NOT NULL, "listOfPerformers" text NOT NULL, "selectedPerformer" boolean NOT NULL DEFAULT false, "status" character varying NOT NULL DEFAULT 'свободен', "victory" character varying NOT NULL DEFAULT '', "favoritesCount" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "userId" integer, CONSTRAINT "PK_710e2d4957aa5878dfe94e4ac2f" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "users_favorites_orders" ("usersId" integer NOT NULL, "ordersId" integer NOT NULL, CONSTRAINT "PK_72eb8e3d29a75e6094a29f70c1d" PRIMARY KEY ("usersId", "ordersId"))`);
         await queryRunner.query(`CREATE INDEX "IDX_592ef9e62687e1bf44e8099e11" ON "users_favorites_orders" ("usersId") `);
         await queryRunner.query(`CREATE INDEX "IDX_8ff1647e70a518caac9445143e" ON "users_favorites_orders" ("ordersId") `);

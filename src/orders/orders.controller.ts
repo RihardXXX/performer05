@@ -18,7 +18,6 @@ import RoleGuard from "@app/guards/role.guard";
 import OrderDto from "@app/orders/dto/createOrders.dto";
 import { User } from "@app/decorators/user.decorator";
 import VictoryOrdersDto from "@app/orders/dto/victoryOrders.dto";
-import { UserEntity } from "@app/user/user.entity";
 
 @Controller()
 export class OrdersController {
@@ -151,6 +150,18 @@ export class OrdersController {
   @UseGuards(AuthGuard)
   async addFavoritesOrder(@User() user: any, @Param("slug") slug: string) {
     const order = await this.ordersService.addFavoritesOrder(user, slug);
+    return this.ordersService.normalizeOrders(order);
+  }
+
+  // Дизлайк для заказа одним пользователем
+  // 1. Проверка авторизации
+  // 2. Получение слага и текущего пользователя
+  // 3. Получения текущего заказа по слагу
+  // 4. Получение пользователя с отношениями
+  @Delete("orders/:slug/favorite")
+  @UseGuards(AuthGuard)
+  async deleteFavoritesOrder(@User() user: any, @Param("slug") slug: string) {
+    const order = await this.ordersService.deleteFavoritesOrder(user, slug);
     return this.ordersService.normalizeOrders(order);
   }
 }

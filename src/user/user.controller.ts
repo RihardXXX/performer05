@@ -7,7 +7,7 @@ import {
   Req,
   Get,
   UseGuards,
-  Patch,
+  Patch, Param
 } from "@nestjs/common";
 import { UserService } from "@app/user/user.service";
 import CreateUserDto from "@app/user/dto/createUser.dto";
@@ -73,5 +73,17 @@ export class UserController {
   ): Promise<any> {
     const updatedUser = await this.userService.updateUserState(user, payload);
     return this.userService.normalizeResponse(updatedUser);
+  }
+
+  // Установка лайков к анкете клиента или мастера
+  // 1. Проверка авторизации
+  // 2. Получение id аккаунта который будем лайкать
+  // 3. Получение id пользователя который будет лайкать
+  // 4. Проверка в массиве ранее отлайканных чтобы второй раз не мог лайкать
+  // 5. Если второй раз хочет лайкать то сделать дизлайк
+  @Post("user/:idUser/like")
+  @UseGuards(AuthGuard)
+  async setLikeAccount(@Param("idUser") idUser: string, @User() currentUser: any) {
+    return await this.userService.setLikeAccount(idUser, currentUser);
   }
 }

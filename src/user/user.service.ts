@@ -91,6 +91,13 @@ export class UserService {
     );
   }
 
+  // Лайк Анкеты мастера или клиента
+  async setLikeAccount(idUser, currentUser) {
+    console.log("idUser", idUser);
+    console.log("currentUser", currentUser);
+    return "ok";
+  }
+
   // Цепляем токен к данным пользователя
   normalizeResponse(user): any {
     delete user.password;

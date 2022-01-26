@@ -281,6 +281,32 @@ export class OrdersService {
     return order;
   }
 
+  // Установка дизлайков для заказов
+  async deleteFavoritesOrder(currentUser, slug) {
+    const id = currentUser.id;
+    // Получение заказа
+    const order = await this.getOrderBySlug(slug);
+    // Получение пользователя с зависимостями
+    const user = await this.userRepository.findOne(id, {
+      relations: ["favorites"],
+    });
+
+    // индекс заказа лайкнутого получаем
+    const indexOrder = user.favorites.findIndex(
+      (orderInFavorites) => orderInFavorites.id === order.id
+    );
+
+    // если заказ залайкан то убираем лайк
+    if (indexOrder >= 0) {
+      user.favorites.splice(indexOrder, 1);
+      order.favoritesCount--;
+      await this.userRepository.save(user);
+      await this.orderRepository.save(order);
+    }
+
+    return order;
+  }
+
   // генарация слага
   generateSLug(title) {
     return `${slugify(title, { lower: true, trim: true })}-${uuidv4().split(
