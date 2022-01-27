@@ -35,6 +35,11 @@ export class UserService {
 
     const newUser = new UserEntity();
     Object.assign(newUser, createUserDto);
+
+    // Чтобы не было ошибки если вдруг не отправят массив для лайков
+    if (!newUser.listIdLikes) {
+      newUser.listIdLikes = [];
+    }
     return await this.userRepository.save(newUser);
   }
 
@@ -92,10 +97,37 @@ export class UserService {
   }
 
   // Лайк Анкеты мастера или клиента
-  async setLikeAccount(idUser, currentUser) {
-    console.log("idUser", idUser);
-    console.log("currentUser", currentUser);
-    return "ok";
+  async setLikeAccount(id, currentUser) {
+    const userForLike = await this.userRepository.findOne(id);
+    // Если нет не одного лайка то есть у пользователя первый лайк
+    if (!userForLike.listIdLikes.length) {
+      // то кладём кладём айдишник того кто лайкнул и увеличиваем количество лайков
+      userForLike.listIdLikes.push(currentUser.id);
+      userForLike.countLikes++;
+      return await this.userRepository.save(userForLike);
+    }
+
+    // Если пользователь ранее лайкал то удаляем его лайк
+    const isLikedUser = userForLike.listIdLikes.some(
+      (id) => Number(id) === currentUser.id
+    );
+    if (isLikedUser) {
+      userForLike.listIdLikes = userForLike.listIdLikes.filter(
+        (id) => Number(id) !== currentUser.id
+      );
+      userForLike.countLikes--;
+      return await this.userRepository.save(userForLike);
+    }
+
+    // Если пользователь ранее не лайкал но до него лойкали другие
+    const isNotLikedUser = userForLike.listIdLikes.some(
+      (id) => Number(id) !== currentUser.id
+    );
+    if (isNotLikedUser) {
+      userForLike.listIdLikes.push(currentUser.id);
+      userForLike.countLikes++;
+      return await this.userRepository.save(userForLike);
+    }
   }
 
   // Цепляем токен к данным пользователя
