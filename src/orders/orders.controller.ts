@@ -164,4 +164,17 @@ export class OrdersController {
     const order = await this.ordersService.deleteFavoritesOrder(user, slug);
     return this.ordersService.normalizeOrders(order);
   }
+
+  // Получение заказов своих (я клиент) на которые подали заявки мастера
+  // 1. Проверка авторизации +
+  // 2. Проверка роли +
+  // 3. Получение айди текущего пользователя +
+  // 4. Поиск заказов своих по своему айди +
+  // 5. Проверка на наличие поданных заявок, массив айдишек проверяем
+  // 6. Подключаем пагинацию на результаты поиска
+  @UseGuards(AuthGuard)
+  @Get("orders/submitted/applications")
+  async ordersWithSubmittedApplications(@User() user) {
+    return this.ordersService.ordersWithSubmittedApplications(user);
+  }
 }

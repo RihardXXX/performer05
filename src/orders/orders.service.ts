@@ -307,6 +307,44 @@ export class OrdersService {
     return order;
   }
 
+  // Получение заказов на которые мастера подали заявки (Я клиент)
+  async ordersWithSubmittedApplications(user) {
+    if (user.role !== "customer") {
+      throw new HttpException(
+        "мастера не могут просматривать этот раздел",
+        HttpStatus.FORBIDDEN
+      );
+    }
+
+    // готовим запрос к таблице заказов
+    const queryBuilder = getRepository(OrdersEntity)
+      .createQueryBuilder("orders")
+      .leftJoinAndSelect("orders.user", "user"); // получаем авторов заказа
+
+    // Сортировка заказов по дате создания свежие сверху
+    queryBuilder.orderBy("orders.createdAt", "DESC");
+
+    // далее фильтрируем заказы по автору
+    queryBuilder.orWhere("orders.userId = :id", {
+      id: user.id,
+    });
+
+    // тут сделать проверку на поле listOfPerformers чтобы не был равен 0
+    queryBuilder.orWhere("orders.listOfPerformers is not null");
+
+    // возвращаем все заказы
+    const ordersAll = await queryBuilder.getMany();
+
+    // Со временем написать пагинацию тут  вывод по 20 заказов
+
+    // сортируем заказы у которых список поданных заявок не пустой
+    const orders = ordersAll.filter((order) => order.listOfPerformers.length);
+
+    const ordersCount = orders.length;
+
+    return { orders, ordersCount };
+  }
+
   // генарация слага
   generateSLug(title) {
     return `${slugify(title, { lower: true, trim: true })}-${uuidv4().split(

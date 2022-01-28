@@ -301,3 +301,50 @@ id это айди анкеты которую будем лайкать
 Header Authorization 
 token tdtdskdjfkf47564756
 ```
+- Получение заказов своих (я клиент) на которые подали заявки мастера
+```js
+method: get
+path: http://localhost:3000/orders/submitted/applications
+id это айди анкеты которую будем лайкать
+```
+```js
+Header Authorization 
+token tdtdskdjfkf47564756
+{
+  "orders": [
+      {
+        "id": 1,
+        "slug": "pochinit-1-b0215e1f",
+        "title": "починить 1",
+        "description": "description котёл",
+        "body": "котёл",
+        "price": "price",
+        "address": "address",
+        "category": [
+          "angular",
+          "react"
+        ],
+        "dueDate": "dueDate",
+        "dueTime": "dueTime",
+        "listOfPerformers": [
+          "2"
+        ],
+        "selectedPerformer": false,
+        "status": "свободен",
+        "victory": "",
+        "favoritesCount": 0,
+        "createdAt": "2022-01-27T17:21:52.484Z",
+        "user": {
+          "id": 1,
+          "username": "test@test.ru",
+          "email": "test@test.ru",
+          "role": "customer",
+          "bio": "",
+          "listIdLikes": [],
+          "countLikes": 0
+        }
+      }
+  ],
+  "ordersCount": 1
+}
+```
