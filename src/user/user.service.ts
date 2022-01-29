@@ -130,6 +130,33 @@ export class UserService {
     }
   }
 
+  // Определяем кто лайкал текущую анкету
+  async getListUsersWhoLikesAccount(id) {
+    const [accountLikes] = await Promise.all([this.userRepository.findOne(id)]);
+    if (!accountLikes) {
+      throw new HttpException(
+        "Такой пользователь отсутствует",
+        HttpStatus.UNPROCESSABLE_ENTITY
+      );
+    }
+
+    // массив с айдишками тех кто лайкал
+    const listLikes = accountLikes.listIdLikes;
+
+    if (!listLikes.length) {
+      throw new HttpException(
+        "Этот аккаунт ещё не лайкали",
+        HttpStatus.UNPROCESSABLE_ENTITY
+      );
+    }
+
+    // В цикле создаем промиссы обращения к БД и забираем лиц кто лайкал
+    const whoLikesAccounts = await Promise.all(
+      listLikes.map((id) => this.userRepository.findOne(Number(id)))
+    );
+    return { whoLikesAccounts };
+  }
+
   // Цепляем токен к данным пользователя
   normalizeResponse(user): any {
     delete user.password;
