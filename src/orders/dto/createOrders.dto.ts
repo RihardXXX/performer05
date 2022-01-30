@@ -72,24 +72,12 @@ export default class orderDto {
   @IsNotEmpty({
     message: "поле день выполнения заказа не может быть пустым",
   })
-  @MinLength(5, {
-    message: "День заказа быть больше 5 символов",
-  })
-  @MaxLength(40, {
-    message: "День заказа не больше 40 символов",
-  })
   readonly dueDate: string;
   //===========
 
   //==========
   @IsNotEmpty({
     message: "поле время выполнения заказа не может быть пустым",
-  })
-  @MinLength(4, {
-    message: "Время заказа быть больше 4 символов",
-  })
-  @MaxLength(40, {
-    message: "Время заказа не больше 40 символов",
   })
   readonly dueTime: string;
   //============

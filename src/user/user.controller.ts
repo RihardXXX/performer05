@@ -4,11 +4,11 @@ import {
   Post,
   UsePipes,
   ValidationPipe,
-  Req,
   Get,
   UseGuards,
   Patch,
   Param,
+  Delete,
 } from "@nestjs/common";
 import { UserService } from "@app/user/user.service";
 import CreateUserDto from "@app/user/dto/createUser.dto";
@@ -99,5 +99,34 @@ export class UserController {
   @UseGuards(AuthGuard)
   async getListUsersWhoLikesAccount(@Param("id") id: string) {
     return this.userService.getListUsersWhoLikesAccount(id);
+  }
+
+  // Добавление пользователя в чёрный список
+  // Проверка авторизации +
+  // Получение айди из параметров пользователя которого хотим добавить в яерный список +
+  // Проверка в БД что по такому айди пользователь существует +
+  // Получение Записи у текущего пользователя +
+  // Проверка того что данный айдишник не находится в черном списке +
+  // Добавление пользователя в черный список +
+  @Patch("users/black/list/account/:id")
+  @UseGuards(AuthGuard)
+  async addUserBlackList(
+    @Param("id") idBlock: string,
+    @User() currentUser: any
+  ) {
+    return this.userService.addUserBlackList(idBlock, currentUser);
+  }
+
+  // Удаление пользователя из черного списка
+  // Проверка авторизации +
+  // Получение айди из параметров пользователя которого хотим удалить из черного списка +
+  // Проверка в БД что по такому айди пользователь существует +
+  // Получение Записи у текущего пользователя +
+  // Проверка того что данный айдишник находится в черном списке +
+  // Удаление пользователя из чёрного списка +
+  @Delete("users/black/list/account/:id")
+  @UseGuards(AuthGuard)
+  async deleteUserBlackList(@Param("id") idUnBlock: string, @User() currentUser: any) {
+    return this.userService.deleteUserBlackList(idUnBlock, currentUser);
   }
 }

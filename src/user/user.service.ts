@@ -157,6 +157,70 @@ export class UserService {
     return { whoLikesAccounts };
   }
 
+  // Добавление пользователя в черный список
+  async addUserBlackList(idBlock, currentUser) {
+    // Поиск юзера по айди которого будем блокировать
+    const isUserForBlocked = await this.userRepository.findOne(idBlock);
+
+    if (!isUserForBlocked) {
+      throw new HttpException(
+        "Такой юзер в базе отсутствует",
+        HttpStatus.UNPROCESSABLE_ENTITY
+      );
+    }
+
+    // Получаем аккаунт текущего пользователя
+    const user = await this.userRepository.findOne(currentUser.id);
+
+    // Проверка что пользователь не находился ранее в черном списке
+    const isBlockedPrev = user.blackList.some(
+      (id) => Number(id) === isUserForBlocked.id
+    );
+
+    if (isBlockedPrev) {
+      throw new HttpException(
+        "Вы ранее добавляли этого пользователя в черный список",
+        HttpStatus.UNPROCESSABLE_ENTITY
+      );
+    }
+
+    // Если ранее пользователь не был добавлен в черный список то добавляем его
+    user.blackList.push(idBlock);
+
+    return await this.userRepository.save(user);
+  }
+
+  // Удаление пользователя из чёрного списка
+  async deleteUserBlackList(idUnBlock, currentUser) {
+    // Поиск юзера по айди которого будем разблокировать
+    const isUserForUnBlocked = await this.userRepository.findOne(idUnBlock);
+
+    if (!isUserForUnBlocked) {
+      throw new HttpException(
+        "Такой юзер в базе отсутствует",
+        HttpStatus.UNPROCESSABLE_ENTITY
+      );
+    }
+
+    // Получаем аккаунт текущего пользователя
+    const user = await this.userRepository.findOne(currentUser.id);
+
+    // Проверка что пользователь находился ранее в черном списке
+    const isBlockedPrev = user.blackList.some(id => Number(id) === isUserForUnBlocked.id);
+
+    if (!isBlockedPrev) {
+      throw new HttpException(
+        "Такого пользователя нет в черном списке",
+        HttpStatus.UNPROCESSABLE_ENTITY
+      );
+    }
+
+    // Если пользователь был в черном списке то удаляем его
+    user.blackList = user.blackList.filter((id) => Number(id) !== isUserForUnBlocked.id);
+
+    return await this.userRepository.save(user);
+  }
+
   // Цепляем токен к данным пользователя
   normalizeResponse(user): any {
     delete user.password;

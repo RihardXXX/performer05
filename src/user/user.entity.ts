@@ -31,6 +31,10 @@ export class UserEntity {
   @Column({ select: false })
   password: string;
 
+  // Тут будет хранится массив айдишек с заблокированными аккаунтами пользователей
+  @Column("simple-array", { default: "" })
+  blackList: number[];
+
   //================ Лайки к аккаунтам ==================
   // массив с айдишками клиентов и мастеров которые лайкали аккаунт
   @Column("simple-array")
