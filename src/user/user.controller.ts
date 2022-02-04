@@ -129,4 +129,15 @@ export class UserController {
   async deleteUserBlackList(@Param("id") idUnBlock: string, @User() currentUser: any) {
     return this.userService.deleteUserBlackList(idUnBlock, currentUser);
   }
+
+  // Получение данных юзера по его айди
+  // 1. Проверка авторизации
+  // 2. Получение юзера из БД по его айди
+  // 3. Нормализация полученных данных и удаление лишней информации
+  @Get("users/:id")
+  @UseGuards(AuthGuard)
+  async getAccountById(@Param("id") id: string) {
+    const user = await this.userService.getAccountById(id);
+    return this.userService.normalizeInfoUser(user);
+  }
 }

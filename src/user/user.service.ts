@@ -245,4 +245,19 @@ export class UserService {
     // сохраняем юзера с обновлённым состоянием в базе
     return await this.userRepository.save(newUser);
   }
+
+  // Получение информации о юзере по его айди
+  async getAccountById(id) {
+    return await this.userRepository.findOne(id)
+  }
+
+  normalizeInfoUser(user) {
+    delete user.password;
+    delete user.email;
+    return {
+      user: {
+        ...user,
+      },
+    };
+  }
 }
