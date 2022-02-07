@@ -134,6 +134,7 @@ export class OrdersController {
     @User() user: any,
     @Body("victory") victoryOrders: VictoryOrdersDto
   ) {
+    console.log(victoryOrders);
     const order = await this.ordersService.selectVictoryPerformerById(
       user,
       victoryOrders

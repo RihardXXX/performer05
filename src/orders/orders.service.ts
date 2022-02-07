@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import OrderDto from "@app/orders/dto/createOrders.dto";
 import { OrdersEntity } from "@app/orders/orders.entity";
-import { getRepository, Repository } from "typeorm";
+import { getRepository, Repository, Brackets } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import slugify from "slugify";
 import { v4 as uuidv4 } from "uuid";
@@ -19,6 +19,7 @@ export class OrdersService {
 
   // Получение списка заказов
   async getOrderList(user, query) {
+    console.log(query);
     // готовим запрос к таблице заказов
     const queryBuilder = getRepository(OrdersEntity)
       .createQueryBuilder("orders")
@@ -27,25 +28,44 @@ export class OrdersService {
     // Сортировка заказов по дате создания свежие сверху
     queryBuilder.orderBy("orders.createdAt", "DESC");
 
+    // необходимо при первом рендере запросов
+    // Если включен поиск по статусу  свободен в работе и выполнено первом рендере без фильтров
+    if (query.status && !query.category && !query.name) {
+      queryBuilder.orWhere("orders.status LIKE :status", {
+        status: `%${query.status}%`,
+      });
+    }
+
     // Поиск по категории, важно то что мы ищет и подстроку благодря проценту
-    if (query.category) {
+    if (query.category && query.status) {
       queryBuilder.andWhere("orders.category LIKE :category", {
         category: `%${query.category}%`,
+      });
+      queryBuilder.andWhere("orders.status LIKE :status", {
+        status: `%${query.status}%`,
       });
     }
 
     // Поиск по ключевой фразе в названии
     // То есть если в имени описании или в теле заказа присутствует это слово
-    if (query.name) {
-      queryBuilder.orWhere("orders.title LIKE :title", {
-        title: `%${query.name}%`,
-      });
-      queryBuilder.orWhere("orders.description LIKE :description", {
-        description: `%${query.name}%`,
-      });
-      queryBuilder.orWhere("orders.body LIKE :body", {
-        body: `%${query.name}%`,
-      });
+    if (query.name && query.status) {
+      queryBuilder
+        .where("orders.status = :status", {
+          status: query.status,
+        })
+        .andWhere(
+          new Brackets((qb) => {
+            qb.orWhere("orders.title LIKE :title", {
+              title: `%${query.name}%`,
+            })
+              .orWhere("orders.description LIKE :description", {
+                description: `%${query.name}%`,
+              })
+              .orWhere("orders.body LIKE :body", {
+                body: `%${query.name}%`,
+              });
+          })
+        );
     }
 
     // Поиск заказа по автору
