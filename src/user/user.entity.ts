@@ -9,6 +9,7 @@ import {
 } from "typeorm";
 import { hash } from "bcrypt";
 import { OrdersEntity } from "@app/orders/orders.entity";
+import { ReviewsEntity } from "@app/reviews/reviews.entity";
 
 // имя таблицы в БД
 @Entity({ name: "users" })
@@ -53,6 +54,10 @@ export class UserEntity {
   // Отношение один ко многим то один аккаунт и много заказов
   @OneToMany(() => OrdersEntity, (order) => order.user)
   orders: OrdersEntity[];
+
+  // Отношение один ко многим то один аккаунт и много отзывов
+  @OneToMany(() => ReviewsEntity, (review) => review.user)
+  reviews: ReviewsEntity[];
 
   // Отношение многие ко многим для лайков заказов
   @ManyToMany(() => OrdersEntity)
