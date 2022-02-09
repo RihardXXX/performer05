@@ -23,7 +23,7 @@ export default class CreateReviewDto {
   readonly author: string;
 
   @IsNotEmpty({
-    message: "айди аккаунта кому оставляем отзыв не может быть пустым",
-  })
-  readonly idAccount: number;
+      message: "айди аккаунта кому оставляем отзыв не может быть пустым",
+    })
+  idAccount: number;
 }
