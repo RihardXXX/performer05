@@ -19,7 +19,7 @@ export class OrdersService {
 
   // Получение списка заказов
   async getOrderList(user, query) {
-    console.log(query);
+    // console.log(query);
     // готовим запрос к таблице заказов
     const queryBuilder = getRepository(OrdersEntity)
       .createQueryBuilder("orders")

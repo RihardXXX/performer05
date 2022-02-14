@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { ReviewsEntity } from "@app/reviews/reviews.entity";
-import { Repository } from "typeorm";
+import { Repository, getRepository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserEntity } from "@app/user/user.entity";
 
@@ -62,6 +62,60 @@ export class ReviewsService {
     // возвращаем объект с отзывом
     return {
       review: newReview,
+    };
+  }
+
+  // Получение писка отзывов по по конкуретному пользователю
+  async getReviewsListById(idUser, query) {
+    // console.log(idUser);
+    // Проверяем вообще есть ли такой аккаунт
+    const isAccount = await this.userRepository.findOne({
+      id: idUser,
+    });
+
+    if (!isAccount) {
+      throw new HttpException(
+        "Пользователя с таким айди не существует",
+        HttpStatus.NOT_FOUND
+      );
+    }
+
+    // Создаем строку квери для запросу в БД
+    const queryBuilder = getRepository(ReviewsEntity)
+      .createQueryBuilder("reviews")
+      .leftJoinAndSelect("reviews.user", "user"); // получаем тех на кого оставляли отзывы
+
+    // Сортировка отзывов по дате создания свежие сверху
+    queryBuilder.orderBy("reviews.createdAt", "DESC");
+
+    // Теперь ищем отзывы по определенному автору
+    if (isAccount) {
+      // далее фильтрируем отзывы по аккаунту на которого он оставлен
+      queryBuilder.andWhere("reviews.userId = :id", {
+        id: idUser,
+      });
+    }
+
+    // возвращаем количество отзывов
+    const reviewsCount = await queryBuilder.getCount();
+
+    // Пишем логику для пагинации
+    if (query.limit) {
+      queryBuilder.limit(query.limit);
+    }
+
+    if (query.offset) {
+      queryBuilder.offset(query.offset);
+    }
+
+    // console.log(isAccount);
+
+    // возвращаем все заказы
+    const reviews = await queryBuilder.getMany();
+
+    return {
+      reviews,
+      reviewsCount,
     };
   }
 }

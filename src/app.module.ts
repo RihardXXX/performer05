@@ -7,6 +7,8 @@ import { UserModule } from "@app/user/user.module";
 import { AuthMiddleware } from "@app/middlewares/auth.middleware";
 import { OrdersModule } from "@app/orders/orders.module";
 import { ReviewsModule } from "@app/reviews/reviews.module";
+import { ServeStaticModule } from "@nestjs/serve-static";
+import { join } from "path";
 
 @Module({
   imports: [
@@ -14,6 +16,10 @@ import { ReviewsModule } from "@app/reviews/reviews.module";
     UserModule,
     OrdersModule,
     ReviewsModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, "..", "client"),
+      exclude: ["/api*"],
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,10 +1,12 @@
 import {
   Controller,
   Post,
+  Get,
   UseGuards,
   UsePipes,
   ValidationPipe,
   Body,
+  Param, Query
 } from "@nestjs/common";
 import AuthGuard from "@app/guards/auth.guard";
 import RoleGuard from "@app/guards/role.guard";
@@ -21,16 +23,26 @@ export class ReviewsController {
   // 3. Получение текста отзыва +
   // 4. Валидация текста отзыва +
   // 5. По айди находим юзера на кого оставляем отзыв +
-  // 6. Создаем Модель ентити отзыва
-  // 7. Мерждим ДТО с Моделью отзыва
-  // 8. Устанавливаем Автора отзыва и его айди в модель отзыва
-  // 9. В модели отзыва устанавливаем связь и кладём найденного юзера по айди на кого оставляем отзыв
-  // 10. Сохраняем в БД отзыв
+  // 6. Создаем Модель ентити отзыва +
+  // 7. Мерждим ДТО с Моделью отзыва +
+  // 8. Устанавливаем Автора отзыва и его айди в модель отзыва +
+  // 9. В модели отзыва устанавливаем связь и кладём найденного юзера по айди на кого оставляем отзыв +
+  // 10. Сохраняем в БД отзыв +
   @Post("reviews")
   @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe())
   async createReviewAccount(@Body("review") createReview: CreateReviewDto) {
     return await this.reviewsService.createReviewAccount(createReview);
   }
+
   // Получение списка отзывов по текущему аккаунту
+  // 1. Проверка авторизации +
+  // 2. Получение айди из тела запроса +
+  // 3. Проверка на наличие по айди отзывов +
+  // 4. Возврат списка отзывов по конкретному юзеру +
+  @Get("reviews/:id")
+  @UseGuards(AuthGuard)
+  async getReviewsListById(@Param("id") idUser: string, @Query() query: any) {
+    return await this.reviewsService.getReviewsListById(idUser, query);
+  }
 }
