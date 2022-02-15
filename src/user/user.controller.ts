@@ -8,7 +8,7 @@ import {
   UseGuards,
   Patch,
   Param,
-  Delete,
+  Delete, Query
 } from "@nestjs/common";
 import { UserService } from "@app/user/user.service";
 import CreateUserDto from "@app/user/dto/createUser.dto";
@@ -139,5 +139,18 @@ export class UserController {
   async getAccountById(@Param("id") id: string) {
     const user = await this.userService.getAccountById(id);
     return this.userService.normalizeInfoUser(user);
+  }
+
+  // Получение списка всех мастеров с пагинацией
+  // 1. Проверка авторизации +
+  // 2. Получение списка всех мастеров
+  // 3. Удаление из найденных элементов конфиденциональной информации
+  // 4. Вернуть в виде объекта внутри которого массив
+  @Get("users/:role")
+  @UseGuards(AuthGuard)
+  async getAllPerformersList(@Param("role") role: string, @User() currentUser: any) {
+    console.log("error");
+    return true;
+    // return this.userService.getAllPerformersList(query);
   }
 }

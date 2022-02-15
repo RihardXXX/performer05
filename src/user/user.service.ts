@@ -3,10 +3,11 @@ import CreateUserDto from "@app/user/dto/createUser.dto";
 import LoginUserDto from "@app/user/dto/loginUser.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserEntity } from "@app/user/user.entity";
-import { Repository } from "typeorm";
+import { getRepository, Repository } from "typeorm";
 import { sign } from "jsonwebtoken";
 import { compare } from "bcrypt";
 import { JWT_SECRET } from "@app/config";
+import { OrdersEntity } from "@app/orders/orders.entity";
 
 @Injectable()
 export class UserService {
@@ -249,6 +250,38 @@ export class UserService {
   // Получение информации о юзере по его айди
   async getAccountById(id) {
     return await this.userRepository.findOne(id)
+  }
+
+  // Получение списка всех мастеров
+  async getAllPerformersList(query) {
+    // готовим запрос к таблице пользователей
+    // const queryBuilder = getRepository(UserEntity)
+    //   .createQueryBuilder("users")
+
+    // Сортировка пользователей по дате создания свежие сверху
+    // queryBuilder.orderBy("users.createdAt", "DESC");
+
+    // Поиск пользователей мастеров только
+    // queryBuilder
+    //   .where("users.role = :role", {
+    //     role: 'performer',
+    //   })
+
+    // возвращаем количество аккаунтов
+    // const performersCount = await queryBuilder.getCount();
+
+    // Пишем логику для пагинации
+    // if (query.limit) {
+    //   queryBuilder.limit(query.limit);
+    // }
+    //
+    // if (query.offset) {
+    //   queryBuilder.offset(query.offset);
+    // }
+
+    // возвращаем все заказы
+    // const performers = await queryBuilder.getMany();
+    // return { performers, performersCount };
   }
 
   normalizeInfoUser(user) {

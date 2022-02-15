@@ -20,12 +20,13 @@ export class AuthMiddleware implements NestMiddleware {
     // токен от клиента парсим и получаем данные пользователя
     const token = request.headers.authorization.split(" ")[1];
     try {
-      // console.log(2);
-      // console.log(token);
+      console.log(2);
+      console.log(token);
       const decoded = verify(token, JWT_SECRET);
       // console.log("decoded", decoded);
       const id = decoded.id;
       const user = await this.userService.getUserById(id);
+      console.log(3);
       // просто в хедар кладём готового пользователя
       request.headers.authorization = user;
       next();
