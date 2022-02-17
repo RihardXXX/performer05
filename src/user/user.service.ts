@@ -253,35 +253,44 @@ export class UserService {
   }
 
   // Получение списка всех мастеров
-  async getAllPerformersList(query) {
+  async getAllPerformersList(role, query) {
+    console.log("role:", role);
     // готовим запрос к таблице пользователей
-    // const queryBuilder = getRepository(UserEntity)
-    //   .createQueryBuilder("users")
+    const queryBuilder = getRepository(UserEntity)
+      .createQueryBuilder("users")
 
-    // Сортировка пользователей по дате создания свежие сверху
-    // queryBuilder.orderBy("users.createdAt", "DESC");
+    // Сортировка пользователей по айди создания свежие сверху
+    queryBuilder.orderBy("users.id", "DESC");
+
+    // Если роль не передана
+    if (!role) {
+      throw new HttpException(
+        "Укажите роль",
+        HttpStatus.UNPROCESSABLE_ENTITY
+      );
+    }
 
     // Поиск пользователей мастеров только
-    // queryBuilder
-    //   .where("users.role = :role", {
-    //     role: 'performer',
-    //   })
+    queryBuilder
+      .where("users.role = :role", {
+        role,
+      })
 
     // возвращаем количество аккаунтов
-    // const performersCount = await queryBuilder.getCount();
+    const usersCount = await queryBuilder.getCount();
 
     // Пишем логику для пагинации
-    // if (query.limit) {
-    //   queryBuilder.limit(query.limit);
-    // }
-    //
-    // if (query.offset) {
-    //   queryBuilder.offset(query.offset);
-    // }
+    if (query.limit) {
+      queryBuilder.limit(query.limit);
+    }
+
+    if (query.offset) {
+      queryBuilder.offset(query.offset);
+    }
 
     // возвращаем все заказы
-    // const performers = await queryBuilder.getMany();
-    // return { performers, performersCount };
+    const users = await queryBuilder.getMany();
+    return { users, usersCount };
   }
 
   normalizeInfoUser(user) {

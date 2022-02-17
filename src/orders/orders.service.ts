@@ -365,6 +365,95 @@ export class OrdersService {
     return { orders, ordersCount };
   }
 
+  // Получение всех моих заказов я клиент и я создал их
+  async getAllMyOrdersCustomer(user, query) {
+    if (user.role !== "customer") {
+      throw new HttpException(
+        "мастера не могут просматривать этот раздел",
+        HttpStatus.FORBIDDEN
+      );
+    }
+
+    // готовим запрос к таблице заказов
+    const queryBuilder = getRepository(OrdersEntity)
+      .createQueryBuilder("orders")
+      .leftJoinAndSelect("orders.user", "user"); // получаем авторов заказа
+
+    // Сортировка заказов по дате создания свежие сверху
+    queryBuilder.orderBy("orders.createdAt", "DESC");
+
+    // далее фильтрируем заказы по автору
+    queryBuilder.orWhere("orders.userId = :id", {
+      id: user.id,
+    });
+
+    // возвращаем количество заказов
+    const ordersCount = await queryBuilder.getCount();
+
+    // Пишем логику для пагинации
+    if (query.limit) {
+      queryBuilder.limit(query.limit);
+    }
+
+    if (query.offset) {
+      queryBuilder.offset(query.offset);
+    }
+
+    // возвращаем все заказы
+    const orders = await queryBuilder.getMany();
+    return { orders, ordersCount };
+  }
+
+  // Получение списка заказов на которые мастер подал заявки
+  async getAllMyOrdersPerformer(user, query) {
+    console.log("user: ", user);
+    console.log("query: ", query);
+    // проверяем роль
+    if (user.role !== "performer") {
+      throw new HttpException(
+        "клиеты не могут просматривать этот раздел",
+        HttpStatus.FORBIDDEN
+      );
+    }
+
+    // готовим запрос к таблице заказов
+    const queryBuilder =
+      getRepository(OrdersEntity).createQueryBuilder("orders");
+
+    // Сортировка заказов по дате создания свежие сверху
+    queryBuilder.orderBy("orders.createdAt", "DESC");
+
+    // // тут сделать проверку на поле listOfPerformers чтобы не был равен 0
+    // queryBuilder.orWhere("orders.listOfPerformers is not null");
+
+    // Первая проверка чтобы массив не был пустым +
+    // Вторая проверка чтобы в массиве присутствовал айди юзера проверить тип данных
+    // тут баг
+    queryBuilder.andWhere("orders.listOfPerformers is not null");
+
+    queryBuilder.andWhere("orders.listOfPerformers LIKE :listOfPerformers", {
+      listOfPerformers: String(user.id),
+    });
+
+    // Тут делать пагинацию
+
+    // возвращаем количество заказов
+    const ordersCount = await queryBuilder.getCount();
+
+    // Пишем логику для пагинации
+    if (query.limit) {
+      queryBuilder.limit(query.limit);
+    }
+
+    if (query.offset) {
+      queryBuilder.offset(query.offset);
+    }
+
+    // возвращаем все заказы
+    const orders = await queryBuilder.getMany();
+    return { orders, ordersCount };
+  }
+
   // генарация слага
   generateSLug(title) {
     return `${slugify(title, { lower: true, trim: true })}-${uuidv4().split(

@@ -178,4 +178,33 @@ export class OrdersController {
   async ordersWithSubmittedApplications(@User() user) {
     return this.ordersService.ordersWithSubmittedApplications(user);
   }
+
+  // Получаем заказы для клиента то есть только его заказы вне зависимости подал мастер или нет
+  // 1. Проверка авторизации +
+  // 2. Проверка роли +
+  // 3. Получаем авторов заказов вместе с заказами +
+  // 4. Сортировка по дате создания заказов +
+  // 5. Фильтрация заказов по авторству чтобы были заказы тольео этого автора +
+  // 6. Установка пагинации +
+  // 7. Возврат заказов +
+  @UseGuards(AuthGuard)
+  @Get("orders/my/all/customer")
+  async getAllMyOrdersCustomer(@User() user, @Query() query: any) {
+    return this.ordersService.getAllMyOrdersCustomer(user, query);
+  }
+
+  // Получаем заказы для мастера
+  // 1. Проверка авторизации +
+  // 2. Проверка роли +
+  // 3. Получаем авторов заказов вместе с заказами - необязательно +
+  // 4. Сортировка по дате создания заказов +
+  // 5. Проверка на пустоту массива с поданными заявками +
+  // 6. Поиск в этом массиве моего айди и вернуть только те заказы в которых ес ть мой айди +
+  // 7. Пагинация +
+  // 8. Возврат на которые я подал заявки +
+  @UseGuards(AuthGuard)
+  @Get("orders/my/all/performer")
+  async getAllMyOrdersPerformer(@User() user, @Query() query: any) {
+    return this.ordersService.getAllMyOrdersPerformer(user, query);
+  }
 }

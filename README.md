@@ -482,3 +482,89 @@ path: http://localhost:3000/rewies/:id
 ```
 ```js
 пагинация ?limit=10&offset=0
+```
+
+- Получение списка мастеров или клиентов
+```js
+method: get
+path: http://localhost:3000/users/role/:role
+role должно быть performer || customer
+пагинация ?limit=10&offset=0
+```
+```js
+Header Authorization 
+token tdtdskdjfkf47564756
+{
+  "users": [
+      {
+        "id": 6,
+        "username": "новый клиент",
+        "email": "yandex@yandex.ru",
+        "role": "performer",
+        "bio": "",
+        "blackList": [],
+        "listIdLikes": [],
+        "countLikes": 0
+      },
+      {
+        "id": 4,
+        "username": "performer4",
+        "email": "performer4@performer.ru",
+        "role": "performer",
+        "bio": "",
+        "blackList": [],
+        "listIdLikes": [],
+        "countLikes": 0
+      },
+    ],
+  "usersCount": 4
+}
+```
+
+- Получение списка заказов для клиента, то заказы созданные мною
+```js
+method: get
+path: http://localhost:3000/orders/my/all/customer
+пагинация ?limit=10&offset=0
+```
+```js
+Header Authorization 
+token tdtdskdjfkf47564756
+{
+  "orders": [
+      {
+        "id": 48,
+        "slug": "test1@test.ru-4bc96226",
+        "title": "test1@test.ru",
+        "description": "test1@test.ru",
+        "body": "test1@test.ru",
+        "price": "2333333",
+        "address": "test1@test.ru",
+        "category": [
+          "Демонтажные работы",
+          "Строительные работы"
+        ],
+        "dueDate": "2022/02/04",
+        "dueTime": "13:05",
+        "listOfPerformers": [],
+        "selectedPerformer": false,
+        "status": "свободен",
+        "victory": "",
+        "favoritesCount": 0,
+        "createdAt": "2022-02-15T15:51:37.263Z",
+        "user": {
+          "id": 5,
+          "username": "Роман11",
+          "email": "test1@test.ru",
+          "role": "customer",
+          "bio": "Добрый клиент",
+          "blackList": [],
+          "listIdLikes": [],
+          "countLikes": 0
+        }
+      }
+    ],
+  "ordersCount": 1
+}
+```
+

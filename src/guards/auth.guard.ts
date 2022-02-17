@@ -13,7 +13,7 @@ export default class AuthGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest();
     const isUser = request.headers.authorization;
-    console.log(4);
+    // console.log(4);
     // Если в мидлваре мы положили распарсенные данные
     // Допуск к роуту
     if (isUser) {

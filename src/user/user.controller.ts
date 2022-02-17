@@ -8,7 +8,8 @@ import {
   UseGuards,
   Patch,
   Param,
-  Delete, Query
+  Delete,
+  Query,
 } from "@nestjs/common";
 import { UserService } from "@app/user/user.service";
 import CreateUserDto from "@app/user/dto/createUser.dto";
@@ -126,7 +127,10 @@ export class UserController {
   // Удаление пользователя из чёрного списка +
   @Delete("users/black/list/account/:id")
   @UseGuards(AuthGuard)
-  async deleteUserBlackList(@Param("id") idUnBlock: string, @User() currentUser: any) {
+  async deleteUserBlackList(
+    @Param("id") idUnBlock: string,
+    @User() currentUser: any
+  ) {
     return this.userService.deleteUserBlackList(idUnBlock, currentUser);
   }
 
@@ -143,14 +147,12 @@ export class UserController {
 
   // Получение списка всех мастеров с пагинацией
   // 1. Проверка авторизации +
-  // 2. Получение списка всех мастеров
-  // 3. Удаление из найденных элементов конфиденциональной информации
-  // 4. Вернуть в виде объекта внутри которого массив
-  @Get("users/:role")
+  // 2. Получение списка всех мастеров и клиентов +
+  // 3. Удаление из найденных элементов конфиденциональной информации +
+  // 4. Вернуть в виде объекта внутри которого массив +
+  @Get("users/role/:role")
   @UseGuards(AuthGuard)
-  async getAllPerformersList(@Param("role") role: string, @User() currentUser: any) {
-    console.log("error");
-    return true;
-    // return this.userService.getAllPerformersList(query);
+  async getAllPerformersList(@Param("role") role: string, @Query() query: any) {
+    return this.userService.getAllPerformersList(role, query);
   }
 }
