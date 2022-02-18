@@ -41,6 +41,12 @@ export class UserService {
     if (!newUser.listIdLikes) {
       newUser.listIdLikes = [];
     }
+
+    // Чтобы не было ошибки если вдруг не отправят массив подписчиков
+    if (!newUser.listIdFollows) {
+      newUser.listIdFollows = [];
+    }
+
     return await this.userRepository.save(newUser);
   }
 

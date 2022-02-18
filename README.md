@@ -568,3 +568,41 @@ token tdtdskdjfkf47564756
 }
 ```
 
+- Получение списка заказов для мастера, то есть заказы на которые я подял заявки
+```js
+method: get
+path: http://localhost:3000/orders/my/all/performer
+пагинация ?limit=10&offset=0
+```
+```js
+Header Authorization 
+token tdtdskdjfkf47564756
+{
+  "orders": [
+      {
+        "id": 42,
+        "slug": "qwerty-18-f8f22f1f",
+        "title": "qwerty 18",
+        "description": "description котёл",
+        "body": "котёл",
+        "price": "price",
+        "address": "address",
+        "category": [
+          "Демонтажные работы"
+        ],
+        "dueDate": "dueDate",
+        "dueTime": "dueTime",
+        "listOfPerformers": [
+          "2"
+        ],
+        "selectedPerformer": false,
+        "status": "свободен",
+        "victory": "",
+        "favoritesCount": 1,
+        "createdAt": "2022-01-31T16:26:45.750Z"
+      },
+    ],
+  "ordersCount": 4
+}
+```
+

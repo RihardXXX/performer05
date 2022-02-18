@@ -41,6 +41,11 @@ export class UserEntity {
   @Column("simple-array")
   listIdLikes: number[];
 
+  //================ айдишки тех кто подписан на аккаунт ==================
+  // массив с айдишками клиентов и мастеров которые подписаны на аккаунт
+  @Column("simple-array", { default: "" })
+  listIdFollows: number[];
+
   // Количество лайков которые поставили к данному аккаунту
   @Column({ default: 0 })
   countLikes: number;
