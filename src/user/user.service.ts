@@ -299,6 +299,56 @@ export class UserService {
     return { users, usersCount };
   }
 
+  // Подписка на аккаунт пользователя
+  async setFollowAccount(id, currentUser) {
+    const myId = String(currentUser.id);
+
+    // защита чтобы юзер не мог подписаться на смого себя
+    if (id === myId) {
+      throw new HttpException(
+        "Вы не можете быть подписаны на самого себя",
+        HttpStatus.UNPROCESSABLE_ENTITY
+      );
+    }
+
+    // находим пользователя на которого собираемся подписаться
+    const userFollow = await this.userRepository.findOne({
+      id
+    })
+
+    // Если пользователь не найден
+    if (!userFollow) {
+      throw new HttpException(
+        "Пользователя с таким айди не существует",
+        HttpStatus.UNPROCESSABLE_ENTITY
+      );
+    }
+
+    // если на юзера никто не подписан то подписываемся на него сразу первый подписчик
+    if (!userFollow.listIdFollows.length) {
+      console.log("никто не подписан: ", userFollow.listIdFollows.length);
+      // делаем подписку
+      userFollow.listIdFollows.push(String(myId));
+      return this.userRepository.save(userFollow);
+    }
+
+    // делаем проверку существует ли айдишка в массиве
+    const repeatId = userFollow.listIdFollows.some(idFollow => idFollow === myId)
+
+    // Если существует подписка то отписываемся
+    if (repeatId) {
+      console.log("вы подписаны");
+      userFollow.listIdFollows = userFollow.listIdFollows
+        .filter(idFollow => idFollow !== myId)
+
+      return await this.userRepository.save(userFollow);
+    } else {
+      // иначе подписываемся
+      userFollow.listIdFollows.push(String(myId));
+      return this.userRepository.save(userFollow);
+    }
+  }
+
   normalizeInfoUser(user) {
     delete user.password;
     delete user.email;
