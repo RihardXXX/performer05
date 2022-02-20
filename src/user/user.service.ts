@@ -349,6 +349,43 @@ export class UserService {
     }
   }
 
+  // получить все аккаунты на которые я подписан
+  async getAllAccountsFollows(currentUser, query) {
+    const myId = String(currentUser.id);
+    console.log(myId);
+
+    // Подготовка строки запроса
+    const queryBuilder =
+      getRepository(UserEntity).createQueryBuilder("users");
+
+    // чтобы масив не был пустым
+    queryBuilder.andWhere("users.listIdFollows is not null");
+
+    // поиск в массиве чтобы был айди
+    queryBuilder.andWhere("users.listIdFollows LIKE :listIdFollows", {
+      listIdFollows: myId,
+    });
+
+    // Тут делать пагинацию
+
+    // возвращаем количество заказов
+    const usersCount = await queryBuilder.getCount();
+
+    // Пишем логику для пагинации
+    if (query.limit) {
+      queryBuilder.limit(query.limit);
+    }
+
+    if (query.offset) {
+      queryBuilder.offset(query.offset);
+    }
+
+    // возвращаем все заказы
+    const usersFollows = await queryBuilder.getMany();
+
+    return { usersFollows, usersCount };
+  }
+
   normalizeInfoUser(user) {
     delete user.password;
     delete user.email;

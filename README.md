@@ -606,3 +606,26 @@ token tdtdskdjfkf47564756
 }
 ```
 
+- Подписаться или отписаться от аккаунта
+```js
+method: get
+path: http://localhost:3000/users/follow/:id
+```
+```js
+Header Authorization 
+token tdtdskdjfkf47564756
+{
+  "id": 6,
+  "username": "новый клиент",
+  "email": "yandex@yandex.ru",
+  "role": "performer",
+  "bio": "",
+  "blackList": [],
+  "listIdLikes": [],
+  "listIdFollows": [
+      "1"
+    ],
+  "countLikes": 0
+}
+```
+
