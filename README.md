@@ -629,3 +629,36 @@ token tdtdskdjfkf47564756
 }
 ```
 
+- Получение списка аккаунтов на которые я подписан
+```js
+method: get
+path: http://localhost:3000/users/list/my/follow
+```
+```js
+Header Authorization 
+token tdtdskdjfkf47564756
+{
+  "usersFollows": [
+      {
+        "id": 2,
+        "username": "performer1",
+        "email": "performer1@performer.ru",
+        "role": "performer",
+        "bio": "",
+        "blackList": [
+          "[]"
+        ],
+        "listIdLikes": [
+          "3",
+          "1"
+        ],
+        "listIdFollows": [
+          "1"
+        ],
+        "countLikes": 2
+      },
+    ],
+  "usersCount": 1
+}
+```
+
