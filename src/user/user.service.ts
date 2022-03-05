@@ -381,9 +381,9 @@ export class UserService {
     }
 
     // возвращаем все заказы
-    const usersFollows = await queryBuilder.getMany();
+    const users = await queryBuilder.getMany();
 
-    return { usersFollows, usersCount };
+    return { users, usersCount };
   }
 
   normalizeInfoUser(user) {
