@@ -454,6 +454,44 @@ export class OrdersService {
     return { orders, ordersCount };
   }
 
+  // Меняем статус заказа на выволненно
+  async setOrderStatusDone(user, slug) {
+    // console.log("user: ", user);
+    // получаем заказ по слагу
+    const order = await this.getOrderBySlug(slug);
+
+    // то что заказ существует
+    if (!order) {
+      throw new HttpException(
+        "заказа с таким слагом не существует",
+        HttpStatus.FORBIDDEN
+      );
+    }
+
+    // То что кто вносит изменения является автором
+    if (user.id !== order.user.id) {
+      throw new HttpException(
+        "вы не являетесь автором заказа",
+        HttpStatus.FORBIDDEN
+      );
+    }
+
+    // То что заказ находится в работе
+    if (!order.selectedPerformer) {
+      throw new HttpException(
+        "статус заказа можно менять на выполненно если заказ только в работе",
+        HttpStatus.FORBIDDEN
+      );
+    }
+
+    order.status = "выполнено";
+    //
+    // console.log("user.id: ", user.id);
+    // console.log("order.user.id: ", order.user.id);
+    // console.log(user.id === order.user.id);
+    return await this.orderRepository.save(order);
+  }
+
   // генарация слага
   generateSLug(title) {
     return `${slugify(title, { lower: true, trim: true })}-${uuidv4().split(

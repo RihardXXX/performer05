@@ -207,4 +207,16 @@ export class OrdersController {
   async getAllMyOrdersPerformer(@User() user, @Query() query: any) {
     return this.ordersService.getAllMyOrdersPerformer(user, query);
   }
+
+  // Создать апи для смены статуса выполнения заказа на выполненно
+  // 1. Проверка авторизации +
+  // 2. Находим заказ по айди или слагу +
+  // 3. Проверка того что мы являемся автором +
+  // 4. Проверить что заказ в статусе в работе +
+  // 5. Сменить статус в работе на выполненно
+  @UseGuards(AuthGuard)
+  @Patch("orders/status/done/:slug")
+  async setOrderStatusDone(@User() user: any, @Param("slug") slug: string) {
+    return this.ordersService.setOrderStatusDone(user, slug);
+  }
 }

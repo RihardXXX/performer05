@@ -138,6 +138,7 @@ export class UserService {
   }
 
   // Определяем кто лайкал текущую анкету
+  // Переписать эту шляпу так как отсутствует пагинация
   async getListUsersWhoLikesAccount(id) {
     const [accountLikes] = await Promise.all([this.userRepository.findOne(id)]);
     if (!accountLikes) {
