@@ -662,3 +662,46 @@ token tdtdskdjfkf47564756
 }
 ```
 
+- Смена статуса заказа на выполненно если вы являетесь авторов и статус заказа в работе
+```js
+method: patch
+path: http://localhost:3000/orders/status/done/:slug
+```
+```js
+Header Authorization 
+token tdtdskdjfkf47564756
+{
+  "id": 43,
+  "slug": "qwerty-19-9307c72b",
+  "title": "qwerty 19",
+  "description": "description котёл",
+  "body": "котёл",
+  "price": "price",
+  "address": "address",
+  "category": [
+      "Демонтажные работы"
+    ],
+  "dueDate": "dueDate",
+  "dueTime": "dueTime",
+  "listOfPerformers": [],
+  "selectedPerformer": true,
+  "status": "выполнено",
+  "victory": "6",
+  "favoritesCount": 1,
+  "createdAt": "2022-01-31T16:26:49.963Z",
+  "user": {
+      "id": 1,
+        "username": "test@test.ru",
+        "email": "test@test.ru",
+        "role": "customer",
+        "bio": "",
+        "blackList": [
+        "[]"
+      ],
+        "listIdLikes": [],
+        "listIdFollows": [],
+        "countLikes": 0
+    }
+}
+```
+
