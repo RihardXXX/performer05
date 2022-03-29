@@ -35,6 +35,10 @@ export class OrdersEntity {
   @Column("simple-array")
   category: string[];
 
+  // координаты для адреса карты где нужно выолнить заказ
+  @Column("simple-array", { default: "" })
+  coords: string[];
+
   // дата выполнения работ
   @Column()
   dueDate: string;

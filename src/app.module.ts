@@ -9,6 +9,7 @@ import { OrdersModule } from "@app/orders/orders.module";
 import { ReviewsModule } from "@app/reviews/reviews.module";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { join } from "path";
+import { ChatGateway } from "./chats/chat.gateway";
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { join } from "path";
     UserModule,
     OrdersModule,
     ReviewsModule,
+    ChatGateway,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, "..", "client"),
       exclude: ["/api*"],
